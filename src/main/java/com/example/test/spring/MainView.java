@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Viewport;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
@@ -29,18 +30,22 @@ public class MainView extends AppLayout {
 
     public MainView(@Autowired MessageBean bean) {
     	
-    	MainWindow main = new MainWindow(); 
-    	
-    	VerticalLayout content = (VerticalLayout) getMainWindow().getContent();
+    	VerticalLayout layout = new VerticalLayout();
+    	layout.setSizeFull();
     	
     	FormLayout form = new FormLayout();
-    	form.setSizeFull();
+    	
     	TextField income = new TextField();
     	income.setLabel("Income");
     	income.setPlaceholder("$30,000");
-    	form.add(income);
     	
-    	setContent(form);
+    	Select state = new Select();
+    	
+    	form.add(income);
+    	form.setWidth("200px");
+    	
+    	layout.add(form);
+    	setContent(layout);
     	
     	H4 title = new H4("EASY TAX CALCULATOR");
     	addToNavbar(new DrawerToggle(), title);
