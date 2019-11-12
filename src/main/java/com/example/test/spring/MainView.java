@@ -2,6 +2,7 @@ package com.example.test.spring;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
 
@@ -34,22 +35,34 @@ public class MainView extends AppLayout {
     	
     	FormLayout form = new FormLayout();
     	
-    	Select<String> select = new Select<String>();
-    	select.setLabel("State");
-    	select.setPlaceholder("Please select");
-    	select.setItems("Montana");
+    	Select<String> state = new Select<String>();
+    	state.setLabel("State");
+    	state.setPlaceholder("Please select");
+    	state.setItems("Montana");
+    	
+    	Select<String> filingStatus = new Select<String>();
+    	filingStatus.setLabel("Filing Status");
+    	filingStatus.setPlaceholder("Please select");
+    	filingStatus.setItems("Single", "Married Filing Jointly");
     	
     	TextField income = new TextField();
     	income.setLabel("Income");
     	income.setPlaceholder("$30,000");
+    	
+    	Button calcBtn = new Button();
     	
     	TextField stateTax = new TextField();
     	stateTax.setLabel("State Tax");
     	stateTax.setReadOnly(true);
     	stateTax.setValue(montana.calculateTax(40000.00));
     	
-    	form.add(select, income, stateTax);
-    	form.setWidth("200px");
+    	TextField takeHome = new TextField();
+    	takeHome.setLabel("Take Home");
+    	takeHome.setReadOnly(true);
+    	takeHome.setValue(montana.calculateTakeHome(40000.00));
+    	
+    	form.add(state, filingStatus, income, stateTax, takeHome);
+    	form.setWidth("230px");
     	
     	layout.add(form);
     	setContent(layout);

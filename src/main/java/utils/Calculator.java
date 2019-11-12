@@ -10,29 +10,37 @@ public abstract class Calculator {
 	public String calculateTax(double income) {
 		
 		double totalTax = 0.0;
+		int j = 0;
 		
 		for(int i = 1; i < brackets.length; i++) {
 			
 			//If income higher than bracket, add tax for whole bracket
-			if(brackets[i] < income) {
-				System.out.println("I " + brackets[i]);
-				if(brackets[i] > income) { // We found the bracket we are in
-					totalTax += taxRates[i - 1] * (income - brackets[i - 1]);
-					System.out.println("Paid here: " + totalTax);
-				}
-				else {
-					totalTax += taxRates[i - 1] * (brackets[i] - brackets[i - 1]);
-					System.out.println("Bracket: " + brackets[i]);
-					System.out.println("Paid in this bracket: " + taxRates[i - 1] * (brackets[i] - brackets[i - 1]));
-					System.out.println("Total Paid: " + totalTax);
-				}
+			if(income > brackets[i]) {
+				totalTax += taxRates[j] * (brackets[i] - brackets[i - 1]);
 			}
+			//Otherwise we fall somewhere in between brackets
+			else {
+				totalTax += taxRates[j] * (income - brackets[i - 1]);
+				break;
+			}
+			j++;
+		}
+		
+		//If we are above all brackets, add tax on remaining income above highest bracket
+		if(income > brackets[brackets.length - 1])
+		{
+			totalTax += taxRates[j] * (income - brackets[brackets.length - 1]);
 		}
 		
 		BigDecimal bd = new BigDecimal(Double.toString(totalTax));
 	    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
 		return bd.toString();
+	}
+	
+	public String calculateTakeHome(double income) {
+		double tax = Double.parseDouble(calculateTax(income));
+		return Double.toString(income - tax);
 	}
 
 	public double[] getTaxRates() {
