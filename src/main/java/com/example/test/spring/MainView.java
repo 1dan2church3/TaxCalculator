@@ -1,19 +1,12 @@
 package com.example.test.spring;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.notification.Notification;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.select.Select;
@@ -23,25 +16,39 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 
+import states.Montana;
+
 @Viewport("width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, viewport-fit=cover")
 @Route
 @PWA(name = "Project Base for Vaadin Flow with Spring", shortName = "Project Base")
 public class MainView extends AppLayout {
 
-    public MainView(@Autowired MessageBean bean) {
+	private static final long serialVersionUID = 1L;
+
+	public MainView(@Autowired MessageBean bean) {
     	
+		Montana montana = new Montana();
+		
     	VerticalLayout layout = new VerticalLayout();
     	layout.setSizeFull();
     	
     	FormLayout form = new FormLayout();
     	
+    	Select<String> select = new Select<String>();
+    	select.setLabel("State");
+    	select.setPlaceholder("Please select");
+    	select.setItems("Montana");
+    	
     	TextField income = new TextField();
     	income.setLabel("Income");
     	income.setPlaceholder("$30,000");
     	
-    	Select state = new Select();
+    	TextField stateTax = new TextField();
+    	stateTax.setLabel("State Tax");
+    	stateTax.setReadOnly(true);
+    	stateTax.setValue(montana.calculateTax(40000.00));
     	
-    	form.add(income);
+    	form.add(select, income, stateTax);
     	form.setWidth("200px");
     	
     	layout.add(form);
@@ -53,16 +60,4 @@ public class MainView extends AppLayout {
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         addToDrawer(tabs);
     }
-    
-    private Component createCard() {
-		Span card1Label = new Span("Card");
-		FlexLayout card = new FlexLayout(card1Label);
-		card.addClassName("card");
-		card.setAlignItems(Alignment.CENTER);
-		card.setJustifyContentMode(JustifyContentMode.CENTER);
-		card.setWidth("100%");
-		card.setHeight("200px");
-		return card;
-	}
-
 }
