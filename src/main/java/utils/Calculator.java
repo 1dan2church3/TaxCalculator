@@ -1,11 +1,13 @@
 package utils;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 public abstract class Calculator {
 
 	private double taxRates [] = null;
 	private double brackets [] = null;
+	NumberFormat usFormat = NumberFormat.getCurrencyInstance();
 	
 	public String calculateTax(double income) {
 		
@@ -35,12 +37,17 @@ public abstract class Calculator {
 		BigDecimal bd = new BigDecimal(Double.toString(totalTax));
 	    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
-		return bd.toString();
+		return usFormat.format(bd).toString();
 	}
 	
 	public String calculateTakeHome(double income) {
-		double tax = Double.parseDouble(calculateTax(income));
-		return Double.toString(income - tax);
+		String incomeString = Double.toString(income);
+		incomeString.replace(",", "");
+		
+		BigDecimal bd = new BigDecimal(calculateTax(Double.parseDouble(incomeString)));
+	    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return usFormat.format(bd).toString();
 	}
 
 	public double[] getTaxRates() {

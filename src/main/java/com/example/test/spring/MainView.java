@@ -5,19 +5,23 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Span;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.PWA;
 
 import states.Montana;
+import utils.NumberFormatter;
 
 @Viewport("width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, viewport-fit=cover")
 @Route
@@ -32,6 +36,7 @@ public class MainView extends AppLayout {
 		
     	VerticalLayout layout = new VerticalLayout();
     	layout.setSizeFull();
+    	layout.setAlignItems(Alignment.CENTER);
     	
     	FormLayout form = new FormLayout();
     	
@@ -45,23 +50,28 @@ public class MainView extends AppLayout {
     	filingStatus.setPlaceholder("Please select");
     	filingStatus.setItems("Single", "Married Filing Jointly");
     	
-    	TextField income = new TextField();
-    	income.setLabel("Income");
-    	income.setPlaceholder("$30,000");
-    	
-    	Button calcBtn = new Button();
-    	
     	TextField stateTax = new TextField();
     	stateTax.setLabel("State Tax");
     	stateTax.setReadOnly(true);
-    	stateTax.setValue(montana.calculateTax(40000.00));
     	
     	TextField takeHome = new TextField();
     	takeHome.setLabel("Take Home");
     	takeHome.setReadOnly(true);
-    	takeHome.setValue(montana.calculateTakeHome(40000.00));
     	
-    	form.add(state, filingStatus, income, stateTax, takeHome);
+    	TextField income = new TextField();
+    	Span dollar = new Span("$");
+    	income.setPrefixComponent(dollar);
+    	income.setLabel("Income");
+    	income.setPlaceholder("30,000");
+    	income.setValueChangeMode(ValueChangeMode.EAGER);
+    	income.addValueChangeListener(event -> income.setValue(NumberFormatter.format(income.getValue())));
+    	    	
+    	Button calcBtn = new Button();
+    	calcBtn.setText("Calculate");
+    	calcBtn.addClickListener(event -> stateTax.setValue(montana.calculateTax(Double.parseDouble(income.getValue().replace(",", "")))));
+    	calcBtn.addClickListener(event -> takeHome.setValue(montana.calculateTakeHome(Double.parseDouble(income.getValue().replace(",", "")))));
+    	
+    	form.add(state, filingStatus, income, calcBtn, stateTax, takeHome);
     	form.setWidth("230px");
     	
     	layout.add(form);
