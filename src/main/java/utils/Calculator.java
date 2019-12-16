@@ -10,7 +10,11 @@ public abstract class Calculator {
 	NumberFormat usFormat = NumberFormat.getCurrencyInstance();
 	
 	public String calculateTax(double income) {
-		
+//		System.out.println("Income: " + income);
+//		
+//		StringBuilder incomeSb = new StringBuilder(Double.toString(income));
+//		incomeSb.insert(incomeSb.length() - 2, '.');
+//		System.out.println("IncomeSb: " + incomeSb);
 		double totalTax = 0.0;
 		int j = 0;
 		

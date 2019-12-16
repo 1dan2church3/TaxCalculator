@@ -1,11 +1,14 @@
 package com.example.test.spring;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
+
+import java.text.NumberFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,6 +36,7 @@ public class MainView extends AppLayout {
 	public MainView(@Autowired MessageBean bean) {
     	
 		Montana montana = new Montana();
+		NumberFormat usFormat = NumberFormat.getCurrencyInstance();
 		
     	VerticalLayout layout = new VerticalLayout();
     	layout.setSizeFull();
@@ -59,17 +63,17 @@ public class MainView extends AppLayout {
     	takeHome.setReadOnly(true);
     	
     	TextField income = new TextField();
-    	Span dollar = new Span("$");
-    	income.setPrefixComponent(dollar);
     	income.setLabel("Income");
-    	income.setPlaceholder("30,000");
+    	income.setPlaceholder("$30,000");
     	income.setValueChangeMode(ValueChangeMode.EAGER);
-    	income.addValueChangeListener(event -> income.setValue(NumberFormatter.format(income.getValue())));
+    	income.addBlurListener(e -> {
+    		income.setValue(usFormat.format(Double.parseDouble(income.getValue().replace("$", "").replace(",", ""))));
+    	});
     	    	
     	Button calcBtn = new Button();
     	calcBtn.setText("Calculate");
-    	calcBtn.addClickListener(event -> stateTax.setValue(montana.calculateTax(Double.parseDouble(income.getValue().replace(",", "")))));
-    	calcBtn.addClickListener(event -> takeHome.setValue(montana.calculateTakeHome(Double.parseDouble(income.getValue().replace(",", "")))));
+    	calcBtn.addClickListener(event -> stateTax.setValue(montana.calculateTax(Double.parseDouble(income.getValue().replace(",", "").replace("$", "").replace(".", "")))));
+    	calcBtn.addClickListener(event -> takeHome.setValue(montana.calculateTakeHome(Double.parseDouble(income.getValue().replace(",", "").replace("$", "").replace(".", "")))));
     	
     	form.add(state, filingStatus, income, calcBtn, stateTax, takeHome);
     	form.setWidth("230px");
