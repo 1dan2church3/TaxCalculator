@@ -5,68 +5,74 @@ import java.text.NumberFormat;
 
 public abstract class Calculator {
 
-	private double taxRates [] = null;
-	private double brackets [] = null;
+	private BigDecimal taxRates [] = null;
+	private BigDecimal brackets [] = null;
 	NumberFormat usFormat = NumberFormat.getCurrencyInstance();
 	
-	public String calculateTax(double income) {
-//		System.out.println("Income: " + income);
-//		
-//		StringBuilder incomeSb = new StringBuilder(Double.toString(income));
-//		incomeSb.insert(incomeSb.length() - 2, '.');
-//		System.out.println("IncomeSb: " + incomeSb);
-		double totalTax = 0.0;
+	public String calculateTax(String income) {
+
+		income = income.replace(",", "").replace("$", "").replace(".", "");
+		StringBuilder sb = new StringBuilder(income);
+		
+		//Remove zeros and add . in correct spot
+		sb.insert(sb.length() - 2, '.');
+		
+		BigDecimal formattedIncome = new BigDecimal(sb.toString());
+		
+		BigDecimal totalTax = new BigDecimal(0.0);
 		int j = 0;
 		
 		for(int i = 1; i < brackets.length; i++) {
 			
 			//If income higher than bracket, add tax for whole bracket
-			if(income > brackets[i]) {
-				totalTax += taxRates[j] * (brackets[i] - brackets[i - 1]);
+			if(formattedIncome.compareTo(brackets[i]) == 1) {
+				totalTax = totalTax.add(taxRates[j].multiply(brackets[i].subtract(brackets[i - 1])));
 			}
 			//Otherwise we fall somewhere in between brackets
 			else {
-				totalTax += taxRates[j] * (income - brackets[i - 1]);
+				totalTax = totalTax.add(taxRates[j].multiply(formattedIncome.subtract(brackets[i - 1])));
 				break;
 			}
 			j++;
 		}
 		
 		//If we are above all brackets, add tax on remaining income above highest bracket
-		if(income > brackets[brackets.length - 1])
+		if(formattedIncome.compareTo(brackets[brackets.length - 1]) == 1)
 		{
-			totalTax += taxRates[j] * (income - brackets[brackets.length - 1]);
+			totalTax = totalTax.add(taxRates[j].multiply(formattedIncome.subtract(brackets[brackets.length - 1])));
 		}
 		
-		BigDecimal bd = new BigDecimal(Double.toString(totalTax));
-	    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+	    totalTax = totalTax.setScale(2, BigDecimal.ROUND_HALF_UP);
 		
-		return usFormat.format(bd).toString();
+		return usFormat.format(totalTax);
 	}
 	
-	public String calculateTakeHome(double income) {
-		String incomeString = Double.toString(income);
-		incomeString.replace(",", "");
+	public String calculateTakeHome(String income, String stateTax, String federalTax) {
 		
-		BigDecimal bd = new BigDecimal(calculateTax(Double.parseDouble(incomeString)));
-	    bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal incomeBd = new BigDecimal(income.replace("$", "").replace(",", ""));
+		BigDecimal stateTaxBd = new BigDecimal(stateTax.replace("$", "").replace(",", ""));
+		BigDecimal federalTaxBd = new BigDecimal(federalTax.replace("$", "").replace(",", ""));
 		
-		return usFormat.format(bd).toString();
+		BigDecimal takeHome = incomeBd.subtract(stateTaxBd.add(federalTaxBd));
+		
+	    takeHome = takeHome.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		return usFormat.format(takeHome).toString();
 	}
 
-	public double[] getTaxRates() {
+	public BigDecimal[] getTaxRates() {
 		return taxRates;
 	}
 
-	public void setTaxRates(double[] taxRates) {
+	public void setTaxRates(BigDecimal[] taxRates) {
 		this.taxRates = taxRates;
 	}
 
-	public double[] getBrackets() {
+	public BigDecimal[] getBrackets() {
 		return brackets;
 	}
 
-	public void setBrackets(double[] brackets) {
+	public void setBrackets(BigDecimal[] brackets) {
 		this.brackets = brackets;
 	} 
 }
