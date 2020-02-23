@@ -7,7 +7,8 @@ public class Calculator {
 
 	private static NumberFormat usFormat = NumberFormat.getCurrencyInstance();
 
-	public static String calculateTax(BigDecimal income, BigDecimal[] taxBrackets, BigDecimal[] taxRates) {
+	public static String calculateTax(String income, String filingStatus, BigDecimal[] taxBrackets,
+			BigDecimal[] taxRates) {
 
 		income = income.replace(",", "").replace("$", "").replace(".", "");
 		StringBuilder sb = new StringBuilder(income);
@@ -15,7 +16,7 @@ public class Calculator {
 		// Remove zeros and add . in correct spot
 		sb.insert(sb.length() - 2, '.');
 
-		BigDecimal formattedIncome = new BigDecimal(sb.toString());
+		BigDecimal formattedIncome = new BigDecimal(sb.toString()).subtract(FilingStatus.getStdDeduction(filingStatus));
 
 		BigDecimal totalTax = new BigDecimal(0.0);
 		int j = 0;
