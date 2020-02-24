@@ -1,4 +1,5 @@
 package utils;
+
 import java.math.BigDecimal;
 
 public class FilingStatus {
@@ -8,10 +9,10 @@ public class FilingStatus {
 		switch (status) {
 		case ("HeadOfHousehold"):
 			return new BigDecimal(18650);
-		case ("MarriedFilingJointly"):
+		case ("Married Filing Jointly"):
 			return new BigDecimal(24400);
 
-		case ("MarriedFilingSeperately"):
+		case ("Married Filing Seperately"):
 			return new BigDecimal(12400);
 		case ("Single"):
 			return new BigDecimal(12200);

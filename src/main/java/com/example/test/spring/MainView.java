@@ -31,6 +31,7 @@ public class MainView extends AppLayout {
 		Tabs tabs = new Tabs(new Tab("Home"), new Tab("About"));
 		tabs.setOrientation(Tabs.Orientation.VERTICAL);
 		addToDrawer(tabs);
+		setDrawerOpened(false);
 
 		layout.add(new TaxForm());
 		setContent(layout);
