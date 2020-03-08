@@ -7,11 +7,10 @@ public class FilingStatus {
 	public static BigDecimal getStdDeduction(String status) {
 
 		switch (status) {
-		case ("HeadOfHousehold"):
+		case ("Head of Household"):
 			return new BigDecimal(18650);
 		case ("Married Filing Jointly"):
 			return new BigDecimal(24400);
-
 		case ("Married Filing Seperately"):
 			return new BigDecimal(12400);
 		case ("Single"):
