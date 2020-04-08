@@ -1,4 +1,4 @@
-package com.example.test.spring;
+package pages;
 
 import java.text.NumberFormat;
 
@@ -85,6 +85,11 @@ public class TaxForm extends FormLayout {
 		weeklyIncome.setReadOnly(true);
 		weeklyIncome.setWidth("260px");
 
+		TextField rothAmount = new TextField();
+		rothAmount.setLabel("Suggested amount to contribute to Roth IRA");
+		rothAmount.setReadOnly(true);
+		rothAmount.setWidth("260px");
+
 		Button calcBtn = new Button();
 		calcBtn.setText("Calculate");
 
@@ -120,6 +125,9 @@ public class TaxForm extends FormLayout {
 		// Bi-weekly income
 		calcBtn.addClickListener(event -> biWeeklyIncome.setValue(Calculator.getBiweeklyIncome(takeHome.getValue())));
 
+		calcBtn.addClickListener(event -> rothAmount
+				.setValue(Calculator.getRothAmount(income.getValue(), filingStatus.getValue(), state.getValue())));
+
 		calcBtn.setWidth("260px");
 
 		calcBtn.addClickListener(event -> {
@@ -128,7 +136,7 @@ public class TaxForm extends FormLayout {
 			}
 		});
 		add(state, filingStatus, income, calcBtn, taxableIncome, stateTax, federalTax, totalTax, takeHome,
-				monthlyIncome, biWeeklyIncome, weeklyIncome);
+				monthlyIncome, biWeeklyIncome, weeklyIncome, rothAmount);
 		setMaxWidth("380px");
 
 	}

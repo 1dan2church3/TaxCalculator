@@ -3,6 +3,8 @@ package utils;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 
+import states.TaxBrackets;
+
 public class Calculator {
 
 	private static NumberFormat usFormat = NumberFormat.getCurrencyInstance();
@@ -101,9 +103,47 @@ public class Calculator {
 	public static String getBiweeklyIncome(String yearlyIncome) {
 		return usFormat.format(formatString(yearlyIncome).divide(new BigDecimal("26"), 2, BigDecimal.ROUND_HALF_UP));
 	}
-	
+
 	public static String getWeeklyIncome(String yearlyIncome) {
 		return usFormat.format(formatString(yearlyIncome).divide(new BigDecimal("52"), 2, BigDecimal.ROUND_HALF_UP));
 	}
 
+	public static String getRothAmount(String pretaxIncome, String filingStatus, String state) {
+
+		BigDecimal taxBracket = getTaxBracket(pretaxIncome, filingStatus, state);
+
+		BigDecimal taxableIncome = formatString(getTaxableIncome(pretaxIncome, filingStatus));
+		BigDecimal iraLimit = new BigDecimal("6000");
+
+		BigDecimal rothAmount = iraLimit.subtract(taxableIncome.subtract(taxBracket));
+
+		System.out.println("TaxBracket: " + taxBracket);
+		System.out.println("Roth: " + rothAmount);
+
+		if (rothAmount.compareTo(new BigDecimal("0")) == -1) {
+			return usFormat.format(new BigDecimal("0"));
+		}
+
+		else {
+			return usFormat.format(rothAmount);
+		}
+	}
+
+	private static BigDecimal getTaxBracket(String pretaxIncome, String filingStatus, String state) {
+
+		BigDecimal taxableIncome = formatString(getTaxableIncome(pretaxIncome, filingStatus));
+		BigDecimal[] taxBrackets = TaxBrackets.getTaxBrackets(state);
+		BigDecimal bracket = taxBrackets[0];
+
+		for (BigDecimal currentBracket : taxBrackets) {
+			if (taxableIncome.compareTo(bracket) == 1) {
+				bracket = currentBracket;
+			}
+		}
+		return bracket;
+	}
+
+	public static String getTaxableIncome() {
+		return null;
+	}
 }
